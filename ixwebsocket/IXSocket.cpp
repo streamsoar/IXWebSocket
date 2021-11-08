@@ -211,7 +211,16 @@ namespace ix
         flags = MSG_NOSIGNAL;
 #endif
 
+#if defined(_WIN32)
+
+        return ::send(_sockfd, buffer, static_cast< int >( length ), flags);
+
+
+#else
+
         return ::send(_sockfd, buffer, length, flags);
+
+#endif
     }
 
     ssize_t Socket::send(const std::string& buffer)
@@ -257,7 +266,7 @@ namespace ix
     void Socket::closeSocket(int fd)
     {
 #ifdef _WIN32
-        closesocket(fd);
+        closesocket(static_cast< SOCKET >( fd ) );
 #else
         ::close(fd);
 #endif
@@ -359,6 +368,10 @@ namespace ix
 
         return std::make_pair(true, line);
     }
+
+#if defined( _MSC_VER)
+#pragma warning( disable : 6262 )
+#endif
 
     std::pair<bool, std::string> Socket::readBytes(
         size_t length,

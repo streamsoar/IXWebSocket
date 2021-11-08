@@ -247,14 +247,14 @@ namespace ix
         bool success = _socket->connect(host, port, errMsg, isCancellationRequested);
         if (!success)
         {
-            std::stringstream ss;
-            ss << "Cannot connect to url: " << url << " / error : " << errMsg;
+            std::stringstream ss2;
+            ss2 << "Cannot connect to url: " << url << " / error : " << errMsg;
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::CannotConnect,
                                                   headers,
                                                   payload,
-                                                  ss.str(),
+                                                  ss2.str(),
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -264,15 +264,15 @@ namespace ix
 
         if (args->verbose)
         {
-            std::stringstream ss;
-            ss << "Sending " << verb << " request "
+            std::stringstream ss2;
+            ss2 << "Sending " << verb << " request "
                << "to " << host << ":" << port << std::endl
                << "request size: " << req.size() << " bytes" << std::endl
                << "=============" << std::endl
                << req << "=============" << std::endl
                << std::endl;
 
-            log(ss.str(), args);
+            log(ss2.str(), args);
         }
 
         if (!_socket->writeBytes(req, isCancellationRequested))
@@ -309,9 +309,9 @@ namespace ix
 
         if (args->verbose)
         {
-            std::stringstream ss;
-            ss << "Status line " << line;
-            log(ss.str(), args);
+            std::stringstream ss2;
+            ss2 << "Status line " << line;
+            log(ss2.str(), args);
         }
 
         if (sscanf(line.c_str(), "HTTP/1.1 %d", &code) != 1)
@@ -362,14 +362,14 @@ namespace ix
 
             if (redirects >= args->maxRedirects)
             {
-                std::stringstream ss;
-                ss << "Too many redirects: " << redirects;
+                std::stringstream ss2;
+                ss2 << "Too many redirects: " << redirects;
                 return std::make_shared<HttpResponse>(code,
                                                       description,
                                                       HttpErrorCode::TooManyRedirects,
                                                       headers,
                                                       payload,
-                                                      ss.str(),
+                                                      ss2.str(),
                                                       uploadSize,
                                                       downloadSize);
             }

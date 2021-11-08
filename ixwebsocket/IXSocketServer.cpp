@@ -33,7 +33,7 @@ namespace ix
         , _backlog(backlog)
         , _maxConnections(maxConnections)
         , _addressFamily(addressFamily)
-        , _serverFd(-1)
+        , _serverFd(ix::socket_t( -1 ) )
         , _stop(false)
         , _stopGc(false)
         , _connectionStateFactory(&ConnectionState::createConnectionState)
@@ -94,14 +94,24 @@ namespace ix
             ss << "SocketServer::listen() error calling setsockopt(SO_REUSEADDR) "
                << "at address " << _host << ":" << _port << " : " << strerror(Socket::getErrno());
 
-            Socket::closeSocket(_serverFd);
+            Socket::closeSocket( static_cast< int >( _serverFd ) );
             return std::make_pair(false, ss.str());
         }
 
         if (_addressFamily == AF_INET)
         {
             struct sockaddr_in server;
+
+#if defined( _WIN32 )
+                        
+            server.sin_family = static_cast< ADDRESS_FAMILY >( _addressFamily );
+
+#else
+
             server.sin_family = _addressFamily;
+
+#endif
+
             server.sin_port = htons(_port);
 
             if (ix::inet_pton(_addressFamily, _host.c_str(), &server.sin_addr.s_addr) <= 0)
