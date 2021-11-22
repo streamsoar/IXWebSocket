@@ -46,12 +46,12 @@ namespace ix
         // block us for too long
         SocketConnect::configure(static_cast< int >( fd ) );
 
-        int res = ::connect(fd, address->ai_addr, address->ai_addrlen);
+        int res = ::connect( static_cast< SOCKET >( fd ), address->ai_addr, static_cast< int >( address->ai_addrlen ) );
 
         if (res == -1 && !Socket::isWaitNeeded())
         {
             errMsg = strerror(Socket::getErrno());
-            Socket::closeSocket(fd);
+            Socket::closeSocket( static_cast< int >( fd ) );
             return -1;
         }
 
@@ -59,7 +59,7 @@ namespace ix
         {
             if (isCancellationRequested && isCancellationRequested()) // Must handle timeout as well
             {
-                Socket::closeSocket(fd);
+                Socket::closeSocket( static_cast< int >( fd ) );
                 errMsg = "Cancelled";
                 return -1;
             }
