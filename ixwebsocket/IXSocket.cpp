@@ -235,7 +235,7 @@ namespace ix
         flags = MSG_NOSIGNAL;
 #endif
 
-        return ::recv(_sockfd, (char*) buffer, length, flags);
+        return ::recv(_sockfd, (char*) buffer, static_cast< int >( length ), flags);
     }
 
     int Socket::getErrno()
@@ -298,8 +298,8 @@ namespace ix
                 }
                 else
                 {
-                    offset += ret;
-                    len -= ret;
+                    offset += static_cast< int >( ret );
+                    len -= static_cast< int >( ret );
                     continue;
                 }
             }

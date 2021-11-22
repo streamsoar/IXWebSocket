@@ -142,14 +142,14 @@ namespace ix
 
         if (!UrlParser::parse(url, protocol, host, path, query, port))
         {
-            std::stringstream ss;
-            ss << "Cannot parse url: " << url;
+            std::stringstream ss2;
+            ss2 << "Cannot parse url: " << url;
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::UrlMalformed,
                                                   headers,
                                                   payload,
-                                                  ss.str(),
+                                                  ss2.str(),
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -238,17 +238,17 @@ namespace ix
         }
 
         std::string req(ss.str());
-        std::string errMsg;
+        std::string errMsg2;
 
         // Make a cancellation object dealing with connection timeout
         auto isCancellationRequested =
             makeCancellationRequestWithTimeout(args->connectTimeout, _stop);
 
-        bool success = _socket->connect(host, port, errMsg, isCancellationRequested);
+        bool success = _socket->connect(host, port, errMsg2, isCancellationRequested);
         if (!success)
         {
             std::stringstream ss2;
-            ss2 << "Cannot connect to url: " << url << " / error : " << errMsg;
+            ss2 << "Cannot connect to url: " << url << " / error : " << errMsg2;
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::CannotConnect,
@@ -277,13 +277,13 @@ namespace ix
 
         if (!_socket->writeBytes(req, isCancellationRequested))
         {
-            std::string errorMsg("Cannot send request");
+            std::string errorMsg2("Cannot send request");
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::SendError,
                                                   headers,
                                                   payload,
-                                                  errorMsg,
+                                                  errorMsg2,
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -296,13 +296,13 @@ namespace ix
 
         if (!lineValid)
         {
-            std::string errorMsg("Cannot retrieve status line");
+            std::string errorMsg2("Cannot retrieve status line");
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::CannotReadStatusLine,
                                                   headers,
                                                   payload,
-                                                  errorMsg,
+                                                  errorMsg2,
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -316,13 +316,13 @@ namespace ix
 
         if (sscanf(line.c_str(), "HTTP/1.1 %d", &code) != 1)
         {
-            std::string errorMsg("Cannot parse response code from status line");
+            std::string errorMsg2("Cannot parse response code from status line");
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::MissingStatus,
                                                   headers,
                                                   payload,
-                                                  errorMsg,
+                                                  errorMsg2,
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -333,13 +333,13 @@ namespace ix
 
         if (!headersValid)
         {
-            std::string errorMsg("Cannot parse http headers");
+            std::string errorMsg2("Cannot parse http headers");
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::HeaderParsingError,
                                                   headers,
                                                   payload,
-                                                  errorMsg,
+                                                  errorMsg2,
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -349,13 +349,13 @@ namespace ix
         {
             if (headers.find("Location") == headers.end())
             {
-                std::string errorMsg("Missing location header for redirect");
+                std::string errorMsg2("Missing location header for redirect");
                 return std::make_shared<HttpResponse>(code,
                                                       description,
                                                       HttpErrorCode::MissingLocation,
                                                       headers,
                                                       payload,
-                                                      errorMsg,
+                                                      errorMsg2,
                                                       uploadSize,
                                                       downloadSize);
             }
@@ -420,7 +420,7 @@ namespace ix
         else if (headers.find("Transfer-Encoding") != headers.end() &&
                  headers["Transfer-Encoding"] == "chunked")
         {
-            std::stringstream ss;
+            std::stringstream ss2;
 
             while (true)
             {
@@ -440,9 +440,9 @@ namespace ix
                 }
 
                 uint64_t chunkSize;
-                ss.str("");
-                ss << std::hex << line;
-                ss >> chunkSize;
+                ss2.str("");
+                ss2 << std::hex << line;
+                ss2 >> chunkSize;
 
                 if (args->verbose)
                 {
@@ -494,13 +494,13 @@ namespace ix
         }
         else
         {
-            std::string errorMsg("Cannot read http body");
+            std::string errorMsg2("Cannot read http body");
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::CannotReadBody,
                                                   headers,
                                                   payload,
-                                                  errorMsg,
+                                                  errorMsg2,
                                                   uploadSize,
                                                   downloadSize);
         }
@@ -514,25 +514,25 @@ namespace ix
             std::string decompressedPayload;
             if (!gzipDecompress(payload, decompressedPayload))
             {
-                std::string errorMsg("Error decompressing payload");
+                std::string errorMsg2("Error decompressing payload");
                 return std::make_shared<HttpResponse>(code,
                                                       description,
                                                       HttpErrorCode::Gzip,
                                                       headers,
                                                       payload,
-                                                      errorMsg,
+                                                      errorMsg2,
                                                       uploadSize,
                                                       downloadSize);
             }
             payload = decompressedPayload;
 #else
-            std::string errorMsg("ixwebsocket was not compiled with gzip support on");
+            std::string errorMsg2("ixwebsocket was not compiled with gzip support on");
             return std::make_shared<HttpResponse>(code,
                                                   description,
                                                   HttpErrorCode::Gzip,
                                                   headers,
                                                   payload,
-                                                  errorMsg,
+                                                  errorMsg2,
                                                   uploadSize,
                                                   downloadSize);
 #endif

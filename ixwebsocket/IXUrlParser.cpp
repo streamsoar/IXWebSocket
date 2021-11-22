@@ -151,8 +151,10 @@ namespace
             }
 
             // scheme should be lowercase
-            std::transform(
-                Result.m_Scheme.begin(), Result.m_Scheme.end(), Result.m_Scheme.begin(), ::tolower);
+            std::transform(Result.m_Scheme.begin(),
+                           Result.m_Scheme.end(),
+                           Result.m_Scheme.begin(),
+                           [](char c) { return static_cast<char>(::tolower(c)); } );
 
             // skip ':'
             CurrentString = LocalString + 1;

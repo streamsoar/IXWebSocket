@@ -910,10 +910,10 @@ namespace ix
         masking_key[3] = (x) &0xff;
 
         std::vector<uint8_t> header;
-        header.assign(2 + (message_size >= 126 ? 2 : 0) + (message_size >= 65536 ? 6 : 0) +
-                          (_useMask ? 4 : 0),
-                      0);
-        header[0] = type;
+        header.assign(static_cast< size_t >( 2 + (message_size >= 126 ? 2 : 0) + (message_size >= 65536 ? 6 : 0) +
+                          (_useMask ? 4 : 0) ),
+                      uint8_t( 0 ));
+        header[0] = static_cast< uint8_t >( type );
 
         // The fin bit indicate that this is the last fragment. Fin is French for end.
         if (fin)
@@ -1014,13 +1014,13 @@ namespace ix
 
     bool WebSocketTransport::sendOnSocket()
     {
-        std::lock_guard<std::mutex> lock(_txbufMutex);
+        std::lock_guard<std::mutex> lockTransaction(_txbufMutex);
 
         while (_txbuf.size())
         {
             ssize_t ret = 0;
             {
-                std::lock_guard<std::mutex> lock(_socketMutex);
+                std::lock_guard<std::mutex> lockSocket(_socketMutex);
                 ret = _socket->send((char*) &_txbuf[0], _txbuf.size());
             }
 

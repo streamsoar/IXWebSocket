@@ -44,7 +44,7 @@ namespace ix
 
         // Set the socket to non blocking mode, so that slow responses cannot
         // block us for too long
-        SocketConnect::configure(fd);
+        SocketConnect::configure(static_cast< int >( fd ) );
 
         int res = ::connect(fd, address->ai_addr, address->ai_addrlen);
 
@@ -91,9 +91,9 @@ namespace ix
             }
         }
 
-        Socket::closeSocket(fd);
+     /* Socket::closeSocket(fd);
         errMsg = "connect timed out after 60 seconds";
-        return -1;
+        return -1; Unreachable code - CS */
     }
 
     int SocketConnect::connect(const std::string& hostname,

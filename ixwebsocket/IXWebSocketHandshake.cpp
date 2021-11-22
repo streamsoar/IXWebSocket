@@ -167,11 +167,11 @@ namespace ix
         // HTTP/1.0 is too old.
         if (httpVersion != "HTTP/1.1")
         {
-            std::stringstream ss;
-            ss << "Expecting HTTP/1.1, got " << httpVersion << ". "
+            std::stringstream ss2;
+            ss2 << "Expecting HTTP/1.1, got " << httpVersion << ". "
                << "Rejecting connection to " << url << ", status: " << status
                << ", HTTP Status line: " << line;
-            return WebSocketInitResult(false, status, ss.str());
+            return WebSocketInitResult(false, status, ss2.str());
         }
 
         auto result = parseHttpHeaders(_socket, isCancellationRequested);
@@ -187,11 +187,11 @@ namespace ix
         // a redirection (like 301)
         if (status != 101)
         {
-            std::stringstream ss;
-            ss << "Expecting status 101 (Switching Protocol), got " << status
+            std::stringstream ss2;
+            ss2 << "Expecting status 101 (Switching Protocol), got " << status
                << " status connecting to " << url << ", HTTP Status line: " << line;
 
-            return WebSocketInitResult(false, status, ss.str(), headers, path);
+            return WebSocketInitResult(false, status, ss2.str(), headers, path);
         }
 
         // Check the presence of the connection field
@@ -209,9 +209,9 @@ namespace ix
         //
         if (!insensitiveStringCompare(headers["connection"], "Upgrade"))
         {
-            std::stringstream ss;
-            ss << "Invalid connection value: " << headers["connection"];
-            return WebSocketInitResult(false, status, ss.str());
+            std::stringstream ss2;
+            ss2 << "Invalid connection value: " << headers["connection"];
+            return WebSocketInitResult(false, status, ss2.str());
         }
 
         char output[29] = {};

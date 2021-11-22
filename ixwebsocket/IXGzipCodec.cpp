@@ -23,6 +23,8 @@ namespace ix
     std::string gzipCompress(const std::string& str)
     {
 #ifndef IXWEBSOCKET_USE_ZLIB
+        str;
+
         return std::string();
 #else
 #ifdef IXWEBSOCKET_USE_DEFLATE
@@ -116,6 +118,8 @@ namespace ix
     bool gzipDecompress(const std::string& in, std::string& out)
     {
 #ifndef IXWEBSOCKET_USE_ZLIB
+        in;
+        out;
         return false;
 #else
 #ifdef IXWEBSOCKET_USE_DEFLATE

@@ -73,7 +73,7 @@ namespace ix
         //
         pthread_setname_np(pthread_self(), name.substr(0, 15).c_str());
 #elif defined(_WIN32)
-        SetThreadName(-1, name.c_str());
+        SetThreadName(static_cast< DWORD >( -1 ), name.c_str());
 #elif defined(BSD)
         pthread_set_name_np(pthread_self(), name.substr(0, 15).c_str());
 #else
