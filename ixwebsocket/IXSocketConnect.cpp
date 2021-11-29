@@ -67,7 +67,7 @@ namespace ix
             int timeoutMs = 10;
             bool readyToRead = false;
             auto selectInterrupt = ix::make_unique<SelectInterrupt>();
-            PollResultType pollResult = Socket::poll(readyToRead, timeoutMs, fd, selectInterrupt);
+            PollResultType pollResult = Socket::poll(readyToRead, timeoutMs, static_cast< int >( fd ), selectInterrupt);
 
             if (pollResult == PollResultType::Timeout)
             {
@@ -75,17 +75,17 @@ namespace ix
             }
             else if (pollResult == PollResultType::Error)
             {
-                Socket::closeSocket(fd);
+                Socket::closeSocket( static_cast< int >( fd ) );
                 errMsg = std::string("Connect error: ") + strerror(Socket::getErrno());
                 return -1;
             }
             else if (pollResult == PollResultType::ReadyForWrite)
             {
-                return fd;
+                return static_cast< int >( fd );
             }
             else
             {
-                Socket::closeSocket(fd);
+                Socket::closeSocket( static_cast< int >( fd ) );
                 errMsg = std::string("Connect error: ") + strerror(Socket::getErrno());
                 return -1;
             }
