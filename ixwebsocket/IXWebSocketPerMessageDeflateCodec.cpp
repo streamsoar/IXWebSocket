@@ -44,6 +44,7 @@ namespace ix
     bool WebSocketPerMessageDeflateCompressor::init(uint8_t deflateBits,
                                                     bool clientNoContextTakeOver)
     {
+
 #ifdef IXWEBSOCKET_USE_ZLIB
         int ret = deflateInit2(&_deflateState,
                                Z_DEFAULT_COMPRESSION,
@@ -58,6 +59,9 @@ namespace ix
 
         return true;
 #else
+        deflateBits;
+        clientNoContextTakeOver;
+
         return false;
 #endif
     }
@@ -196,6 +200,9 @@ namespace ix
 
         return true;
 #else
+        inflateBits;
+        clientNoContextTakeOver;
+
         return false;
 #endif
     }
@@ -240,6 +247,9 @@ namespace ix
 
         return true;
 #else
+        in;
+        out;
+
         return false;
 #endif
     }
