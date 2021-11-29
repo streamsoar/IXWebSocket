@@ -65,7 +65,8 @@ namespace ix
         PCCERT_CONTEXT certificateIterator = NULL;
 
         int certificateCount = 0;
-        while (certificateIterator = CertEnumCertificatesInStore(systemStore, certificateIterator))
+
+        while ( ( certificateIterator = CertEnumCertificatesInStore(systemStore, certificateIterator) ) != nullptr )
         {
             if (certificateIterator->dwCertEncodingType & X509_ASN_ENCODING)
             {

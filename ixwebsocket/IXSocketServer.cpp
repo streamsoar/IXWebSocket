@@ -112,16 +112,16 @@ namespace ix
 
 #endif
 
-            server.sin_port = htons(_port);
+            server.sin_port = ::htons( static_cast< unsigned short >( _port ) );
 
-            if (ix::inet_pton(_addressFamily, _host.c_str(), &server.sin_addr.s_addr) <= 0)
+            if (ix::inet_pton( static_cast< int >(  _addressFamily ), _host.c_str(), &server.sin_addr.s_addr) <= 0)
             {
                 std::stringstream ss;
                 ss << "SocketServer::listen() error calling inet_pton "
                    << "at address " << _host << ":" << _port << " : "
                    << strerror(Socket::getErrno());
 
-                Socket::closeSocket(_serverFd);
+                Socket::closeSocket( static_cast< int >( _serverFd ) );
                 return std::make_pair(false, ss.str());
             }
 
@@ -133,15 +133,15 @@ namespace ix
                    << "at address " << _host << ":" << _port << " : "
                    << strerror(Socket::getErrno());
 
-                Socket::closeSocket(_serverFd);
+                Socket::closeSocket( static_cast< int >( _serverFd ) );
                 return std::make_pair(false, ss.str());
             }
         }
         else // AF_INET6
         {
             struct sockaddr_in6 server;
-            server.sin6_family = _addressFamily;
-            server.sin6_port = htons(_port);
+            server.sin6_family = static_cast< ADDRESS_FAMILY >( _addressFamily );
+            server.sin6_port = htons(static_cast< unsigned short >( _port ) );
 
             if (ix::inet_pton(_addressFamily, _host.c_str(), &server.sin6_addr) <= 0)
             {
@@ -150,19 +150,19 @@ namespace ix
                    << "at address " << _host << ":" << _port << " : "
                    << strerror(Socket::getErrno());
 
-                Socket::closeSocket(_serverFd);
+                Socket::closeSocket( static_cast< int >( _serverFd ) );
                 return std::make_pair(false, ss.str());
             }
 
             // Bind the socket to the server address.
-            if (bind(_serverFd, (struct sockaddr*) &server, sizeof(server)) < 0)
+            if (bind(static_cast< int >( _serverFd ), (struct sockaddr*) &server, sizeof(server)) < 0)
             {
                 std::stringstream ss;
                 ss << "SocketServer::listen() error calling bind "
                    << "at address " << _host << ":" << _port << " : "
                    << strerror(Socket::getErrno());
 
-                Socket::closeSocket(_serverFd);
+                Socket::closeSocket( static_cast< int >( _serverFd ));
                 return std::make_pair(false, ss.str());
             }
         }
@@ -176,7 +176,7 @@ namespace ix
             ss << "SocketServer::listen() error calling listen "
                << "at address " << _host << ":" << _port << " : " << strerror(Socket::getErrno());
 
-            Socket::closeSocket(_serverFd);
+            Socket::closeSocket( static_cast< int >( _serverFd ) );
             return std::make_pair(false, ss.str());
         }
 
@@ -235,7 +235,7 @@ namespace ix
         }
 
         _conditionVariable.notify_one();
-        Socket::closeSocket(_serverFd);
+        Socket::closeSocket(static_cast< int >(_serverFd));
     }
 
     void SocketServer::setConnectionStateFactory(
@@ -276,7 +276,7 @@ namespace ix
     void SocketServer::run()
     {
         // Set the socket to non blocking mode, so that accept calls are not blocking
-        SocketConnect::configure(_serverFd);
+        SocketConnect::configure(static_cast< int >( _serverFd ));
 
         setThreadName("SocketServer::accept");
 
@@ -293,7 +293,7 @@ namespace ix
 
             bool readyToRead = true;
             PollResultType pollResult =
-                Socket::poll(readyToRead, timeoutMs, _serverFd, _acceptSelectInterrupt);
+                Socket::poll(readyToRead, timeoutMs, static_cast< int >( _serverFd ), _acceptSelectInterrupt);
 
             if (pollResult == PollResultType::Error)
             {
@@ -315,7 +315,7 @@ namespace ix
             socklen_t addressLen = sizeof(client);
             memset(&client, 0, sizeof(client));
 
-            if ((clientFd = accept(_serverFd, (struct sockaddr*) &client, &addressLen)) < 0)
+            if ((clientFd = static_cast< int >( accept( _serverFd, (struct sockaddr*) &client, &addressLen) )) < 0)
             {
                 if (!Socket::isWaitNeeded())
                 {

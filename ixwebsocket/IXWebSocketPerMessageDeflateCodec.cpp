@@ -161,6 +161,9 @@ namespace ix
 
         return true;
 #else
+        in;
+        out;
+
         return false;
 #endif
     }
