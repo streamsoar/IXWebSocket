@@ -78,7 +78,7 @@ namespace ix
                             const OnResponseCallback& onResponseCallback);
 
         // TLS
-        void setTLSOptions(const SocketTLSOptions& tlsOptions);
+        void setTLSOptions( const SocketTLSOptions& tlsOptions );
 
         std::string serializeHttpParameters(const HttpParameters& httpParameters);
 
@@ -89,7 +89,7 @@ namespace ix
 
         std::string generateMultipartBoundary();
 
-        std::string urlEncode(const std::string& value);
+        static std::string urlEncode(const std::string& value);
 
         const static std::string kPost;
         const static std::string kGet;
