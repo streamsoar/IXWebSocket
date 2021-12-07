@@ -140,7 +140,16 @@ namespace ix
         else // AF_INET6
         {
             struct sockaddr_in6 server;
+
+#if defined( _WIN32 )
+
             server.sin6_family = static_cast< ADDRESS_FAMILY >( _addressFamily );
+
+#else 
+            server.sin6_family = _addressFamily;
+
+#endif
+
             server.sin6_port = htons(static_cast< unsigned short >( _port ) );
 
             if (ix::inet_pton(_addressFamily, _host.c_str(), &server.sin6_addr) <= 0)
