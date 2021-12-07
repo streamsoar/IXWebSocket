@@ -112,7 +112,7 @@ namespace ix
 
 #endif
 
-            server.sin_port = ::htons( static_cast< unsigned short >( _port ) );
+            server.sin_port = htons( static_cast< unsigned short >( _port ) );
 
             if (ix::inet_pton( static_cast< int >(  _addressFamily ), _host.c_str(), &server.sin_addr.s_addr) <= 0)
             {
