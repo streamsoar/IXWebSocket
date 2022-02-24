@@ -17,6 +17,7 @@
 #include <random>
 #include <sstream>
 #include <vector>
+#include <regex>
 
 namespace ix
 {
@@ -636,6 +637,54 @@ namespace ix
                                       const HttpRequestArgsPtr args)
     {
         return request(url, kPatch, body, args);
+    }
+
+    std::string HttpClient::urlDecode(const std::string& value)
+    {
+        std::ostringstream escaped;
+        escaped.fill('0');
+        escaped << std::hex;
+
+        int stringSize = value.size();
+
+        for (std::string::const_iterator i = value.begin(), n = value.end(); i != n; ++i)
+        {
+            std::string::value_type c = (*i);
+
+            // Write any characters that arent % symbols
+            if (c != '%')
+            {
+                escaped << c;
+                continue;
+            }
+
+            //if there's at least two more characters in the input 
+            if (std::distance(i, value.end()) > 1)
+            {
+                
+                int index = std::distance(value.begin(), i + 1);
+                std::string subStr = value.substr(index, 2);
+
+                if ( ( (subStr[0] >= 'A' && subStr[0] <= 'F') ||
+                     subStr[0] >= 'a' && subStr[0] <= 'f' ||
+                    subStr[0] >= '0' && subStr[0] <= '9')
+                    && (((subStr[1] >= 'A' && subStr[1] <= 'F') ||
+                        subStr[1] >= 'a' && subStr[1] <= 'f' ||
+                        subStr[1] >= '0' && subStr[1] <= '9')) )
+
+                {
+                    char ch = stoul(subStr, nullptr, 16);
+
+                    escaped << ch;
+                    i = i + 2;
+                    continue;
+                }
+            }
+
+            escaped << c;
+        }
+
+        return escaped.str();
     }
 
     std::string HttpClient::urlEncode(const std::string& value)

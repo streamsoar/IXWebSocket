@@ -89,6 +89,7 @@ namespace ix
 
         std::string generateMultipartBoundary();
 
+        static std::string urlDecode(const std::string& value);
         static std::string urlEncode(const std::string& value);
 
         const static std::string kPost;
